@@ -3,7 +3,7 @@ Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: This package helps unifiying units of footprints and budgets of planetary boundaries obtained from literature, and calculates the overshoot for the specific locations where was meassured. Three main accions take place:  1. the package takes four columns (territorial_footprint, territorial_boundary, footprint_percapita, boundary_percapita) and separates their values from units, creating two new columns; 2. the package unifies units within a column and if possible between similar variables (territorial_footprint and territorial_boundary, footprint_percapita and boundary_percapita); 3. The package calculates overshoot according to available data: territorial_footprint/territorial_boundary, or footprint_percapita/boundary_percapita, or territorial_footprint/(territorial_population*boundary_percapita), or (footprint_percapita*territorial_population)/territoria_boundary.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
@@ -14,3 +14,5 @@ Depends:
 LazyData: true
 Imports: 
     stringr
+URL: https://github.com/GiorgiaGraells/PButils
+BugReports: https://github.com/GiorgiaGraells/PButils/issues
