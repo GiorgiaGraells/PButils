@@ -22,6 +22,9 @@ contain a value and a unit, and creates two new columns per input column:
 \examples{
 data("Nitrogen_Data")
 separate_unit_value(df = Nitrogen_Data, columns = "boundary_percapita")
+# With more than one variable
+separate_unit_value(df = Nitrogen_Data,
+                columns = c("global_limit_considered","boundary_percapita"))
 }
 \author{
 Derek Corcoran \href{mailto:derek.corcoran.barrios@gmail.com}{derek.corcoran.barrios@gmail.com}
