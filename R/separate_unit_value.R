@@ -1,23 +1,49 @@
 #' Separates units from values in a dataframe
 #'
-#' The separate_unit_value function, takes a column or columns from a dataframe that contain units and value,
-#' . and separates it into two separate columns names `column_name_value` and `column_name_unit`
+#' The separate_unit_value function takes one or more columns from a dataframe that
+#' contain a value and a unit, and creates two new columns per input column:
+#' `{column}_value` and `{column}_unit`, without removing the original column.
 #'
-#' @param df a dataframe which contains the columns to separate
-#' @param columns a character with the options Mostconnected, Leastconnected and Ordered
-#' @return returns the same dataframe with the new columns
+#' @param df A dataframe which contains the columns to separate
+#' @param columns A character vector with the names of columns to separate
+#' @return Returns the same dataframe with the new columns appended
 #' @examples
-#' # Mostconnected example
 #' data("Nitrogen_Data")
 #' separate_unit_value(df = Nitrogen_Data, columns = "boundary_percapita")
+#' # With more than one variable
+#' separate_unit_value(df = Nitrogen_Data,
+#'                 columns = c("global_limit_considered","boundary_percapita"))
 #' @author Derek Corcoran <derek.corcoran.barrios@gmail.com>
 #' @author Giorgia Graells <gygraell@gmail.com>
 #' @export
-separate_unit_value <- function(df, columns)
-{
-  Results <- df
-  return(Results)
+separate_unit_value <- function(df, columns) {
+  stopifnot(is.data.frame(df))
+  stopifnot(is.character(columns))
+  if (length(columns) == 0) return(df)
+
+  missing_cols <- setdiff(columns, names(df))
+  if (length(missing_cols) > 0) {
+    stop(
+      "These columns are not in `df`: ",
+      paste(missing_cols, collapse = ", "),
+      call. = FALSE
+    )
+  }
+
+  # Create new columns per selected column, preserving originals
+  for (col in columns) {
+    x <- df[[col]]
+
+    # Coerce to character for extraction; keep NAs as NAs
+    x_chr <- if (is.null(x)) rep(NA_character_, nrow(df)) else as.character(x)
+
+    df[[paste0(col, "_value")]] <- extract_value(x_chr)
+    df[[paste0(col, "_unit")]]  <- extract_unit(x_chr)
+  }
+
+  df
 }
+
 
 #' Extracts values from a string with values and Units
 #'
@@ -51,7 +77,7 @@ extract_value <- function(x) {
 #' @examples
 #' data("Nitrogen_Data")
 #' extract_unit(Nitrogen_Data$boundary_percapita)
-#' @importFrom stringr str_extract
+#' @importFrom stringr str_extract str_trim
 #' @author Derek Corcoran <derek.corcoran.barrios@gmail.com>
 #' @author Giorgia Graells <gygraell@gmail.com>
 #' @export

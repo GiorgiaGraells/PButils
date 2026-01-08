@@ -1,0 +1,147 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# PButils
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/GiorgiaGraells/PButils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/GiorgiaGraells/PButils/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+## Overview
+  
+**PButils** provides utility functions to support the processing of planetary boundary data extracted from the literature.
+
+A common issue in planetary boundary and footprint datasets is that **values and units are stored together in the same column**, making comparison, harmonisation, and calculation difficult.
+
+The first core functionality of PButils is to **separate numeric values from their units**, while preserving the original data.
+
+Future functionality will focus on:
+  
+* unit harmonisation across comparable variables,
+* calculation of boundary overshoot at territorial and per-capita scales.
+
+## Installation
+
+You can install the development version of PButils from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("GiorgiaGraells/PButils")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(PButils)
+## basic example code
+```
+
+## Example data
+  
+PButils ships with an example dataset used throughout the package
+documentation:
+  
+```{r dataset}
+data("Nitrogen_Data")
+
+names(Nitrogen_Data)
+```
+
+This dataset contains several columns where numeric values and units are
+stored together as character strings (e.g. `"5.4 kg N cap⁻¹ yr⁻¹"`).
+
+  
+## Separating values and units
+  
+### Single column
+  
+The `separate_unit_value()` function separates a column containing both
+values and units into two new columns:
+  
+* `<column>_value` (numeric)
+* `<column>_unit` (character)
+
+while **preserving the original column**.
+
+```{r caclulatefirstoutput}
+out <- separate_unit_value(
+  df = Nitrogen_Data,
+  columns = "boundary_percapita"
+)
+
+names(out)
+```
+
+```{r showfirstoutput}
+head(
+  out[, c("boundary_percapita",
+          "boundary_percapita_value",
+          "boundary_percapita_unit")]
+)
+```
+  
+### Multiple columns at once
+  
+You can also process multiple columns in a single call:
+  
+```{r yetanotheroutput}
+out2 <- separate_unit_value(
+  df = Nitrogen_Data,
+  columns = c("global_limit_considered", "boundary_percapita")
+)
+
+names(out2)
+```
+
+Each input column generates its own `_value` and `_unit` pair:
+  
+```{r output2}
+head(
+  out2[, c("global_limit_considered_value",
+           "global_limit_considered_unit",
+           "boundary_percapita_value",
+           "boundary_percapita_unit")]
+)
+```
+
+## Low-level helpers
+  
+PButils also exposes the underlying helper functions used internally:
+  
+```{r showhelpers}
+extract_value(Nitrogen_Data$boundary_percapita)
+extract_unit(Nitrogen_Data$boundary_percapita)
+```
+
+
+These can be useful when working directly with vectors rather than data frames.
+
+  
+## Notes
+  
+* Original columns are **never modified or removed**
+* Missing values are preserved as `NA`
+* The implementation avoids non-base piping to keep dependencies minimal
+  
+## Development status
+  
+PButils is under active development.
+The API may evolve as additional unit harmonisation and overshoot
+calculations are added.
+
+Bug reports and feature requests are welcome:
+  [https://github.com/GiorgiaGraells/PButils/issues](https://github.com/GiorgiaGraells/PButils/issues)
