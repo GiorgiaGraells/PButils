@@ -52,4 +52,11 @@ test_that("separate_unit_value adds two columns per input column for multiple co
 
   # 4) originals still present
   expect_true(all(cols %in% names(out)))
+  # 5) order check — each *_value and *_unit directly after its original
+  nms <- names(out)
+  for (col in cols) {
+    i <- match(col, nms)
+    expect_equal(nms[i + 1], paste0(col, "_value"))
+    expect_equal(nms[i + 2], paste0(col, "_unit"))
+  }
 })

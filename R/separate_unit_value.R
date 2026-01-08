@@ -30,19 +30,36 @@ separate_unit_value <- function(df, columns) {
     )
   }
 
-  # Create new columns per selected column, preserving originals
   for (col in columns) {
     x <- df[[col]]
-
-    # Coerce to character for extraction; keep NAs as NAs
     x_chr <- if (is.null(x)) rep(NA_character_, nrow(df)) else as.character(x)
 
-    df[[paste0(col, "_value")]] <- extract_value(x_chr)
-    df[[paste0(col, "_unit")]]  <- extract_unit(x_chr)
+    value_col <- paste0(col, "_value")
+    unit_col  <- paste0(col, "_unit")
+
+    # compute new columns
+    df[[value_col]] <- extract_value(x_chr)
+    df[[unit_col]]  <- extract_unit(x_chr)
+
+    # reorder columns: insert new cols right after original
+    col_pos <- match(col, names(df))
+
+    new_order <- c(
+      names(df)[seq_len(col_pos)],
+      value_col,
+      unit_col,
+      names(df)[-seq_len(col_pos)]
+    )
+
+    # remove duplicates caused by re-inserting names
+    new_order <- new_order[!duplicated(new_order)]
+
+    df <- df[, new_order, drop = FALSE]
   }
 
   df
 }
+
 
 
 #' Extracts values from a string with values and Units
