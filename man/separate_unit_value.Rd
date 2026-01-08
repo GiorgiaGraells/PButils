@@ -7,19 +7,19 @@
 separate_unit_value(df, columns)
 }
 \arguments{
-\item{df}{a dataframe which contains the columns to separate}
+\item{df}{A dataframe which contains the columns to separate}
 
-\item{columns}{a character with the options Mostconnected, Leastconnected and Ordered}
+\item{columns}{A character vector with the names of columns to separate}
 }
 \value{
-returns the same dataframe with the new columns
+Returns the same dataframe with the new columns appended
 }
 \description{
-The separate_unit_value function, takes a column or columns from a dataframe that contain units and value,
-. and separates it into two separate columns names \code{column_name_value} and \code{column_name_unit}
+The separate_unit_value function takes one or more columns from a dataframe that
+contain a value and a unit, and creates two new columns per input column:
+\verb{\{column\}_value} and \verb{\{column\}_unit}, without removing the original column.
 }
 \examples{
-# Mostconnected example
 data("Nitrogen_Data")
 separate_unit_value(df = Nitrogen_Data, columns = "boundary_percapita")
 }
