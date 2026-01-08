@@ -10,6 +10,9 @@
 #' @examples
 #' data("Nitrogen_Data")
 #' separate_unit_value(df = Nitrogen_Data, columns = "boundary_percapita")
+#' # With more than one variable
+#' separate_unit_value(df = Nitrogen_Data,
+#'                 columns = c("global_limit_considered","boundary_percapita"))
 #' @author Derek Corcoran <derek.corcoran.barrios@gmail.com>
 #' @author Giorgia Graells <gygraell@gmail.com>
 #' @export
