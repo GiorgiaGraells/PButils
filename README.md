@@ -3,11 +3,6 @@
 
 # PButils
 
-<!-- badges: start -->
-
-[![R-CMD-check](https://github.com/GiorgiaGraells/PButils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/GiorgiaGraells/PButils/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
-
 ## Overview
 
 **PButils** provides utility functions to support the processing of
@@ -24,7 +19,8 @@ Future functionality will focus on:
 
 - unit harmonisation across comparable variables,
 - calculation of boundary overshoot at territorial and per-capita
-  scales.
+  scales,
+- visualisation helpers (e.g. cartograms).
 
 ## Installation
 
@@ -111,13 +107,15 @@ head(
           "boundary_percapita_value",
           "boundary_percapita_unit")]
 )
+#> # A tibble: 6 × 3
 #>   boundary_percapita boundary_percapita_value boundary_percapita_unit
-#> 1               <NA>                       NA                    <NA>
-#> 2            8.9 kgN                      8.9                     kgN
-#> 3         8.9 kgN/yr                      8.9                  kgN/yr
-#> 4         8.9 kgN/yr                      8.9                  kgN/yr
-#> 5         8.9 kgN/yr                      8.9                  kgN/yr
-#> 6         8.9 kgN/yr                      8.9                  kgN/yr
+#>   <chr>                                 <dbl> <chr>                  
+#> 1 <NA>                                   NA   <NA>                   
+#> 2 8.9 kgN                                 8.9 kgN                    
+#> 3 8.9 kgN/yr                              8.9 kgN/yr                 
+#> 4 8.9 kgN/yr                              8.9 kgN/yr                 
+#> 5 8.9 kgN/yr                              8.9 kgN/yr                 
+#> 6 8.9 kgN/yr                              8.9 kgN/yr
 ```
 
 ### Multiple columns at once
@@ -156,20 +154,17 @@ head(
            "boundary_percapita_value",
            "boundary_percapita_unit")]
 )
-#>   global_limit_considered_value global_limit_considered_unit
-#> 1                            NA                         <NA>
-#> 2                            62                       TgN/yr
-#> 3                            62                       TgN/yr
-#> 4                            62                       TgN/yr
-#> 5                            62                       TgN/yr
-#> 6                            62                       TgN/yr
-#>   boundary_percapita_value boundary_percapita_unit
-#> 1                       NA                    <NA>
-#> 2                      8.9                     kgN
-#> 3                      8.9                  kgN/yr
-#> 4                      8.9                  kgN/yr
-#> 5                      8.9                  kgN/yr
-#> 6                      8.9                  kgN/yr
+#> # A tibble: 6 × 4
+#>   global_limit_considered_value global_limit_considered…¹ boundary_percapita_v…²
+#>                           <dbl> <chr>                                      <dbl>
+#> 1                            NA <NA>                                        NA  
+#> 2                            62 TgN/yr                                       8.9
+#> 3                            62 TgN/yr                                       8.9
+#> 4                            62 TgN/yr                                       8.9
+#> 5                            62 TgN/yr                                       8.9
+#> 6                            62 TgN/yr                                       8.9
+#> # ℹ abbreviated names: ¹​global_limit_considered_unit, ²​boundary_percapita_value
+#> # ℹ 1 more variable: boundary_percapita_unit <chr>
 ```
 
 ## Low-level helpers
@@ -305,6 +300,53 @@ extract_unit(Nitrogen_Data$boundary_percapita)
 
 These can be useful when working directly with vectors rather than data
 frames.
+
+## Cartogram visualisation
+
+PButils includes a helper to visualise planetary-boundary overshoot as a
+cartogram (country areas resized by overshoot or a transformation of
+it).
+
+### Example
+
+This example uses the bundled datasets `PBData` (overshoot values) and
+`World` (country polygons).
+
+``` r
+# Load example data
+# (If you attached these datasets to the package, they will be available via data())
+data("PBData")
+data("World")
+
+# Create a cartogram for a chosen boundary
+res <- pb_cartogram(
+  PB_df = PBData,
+  world_sf = World,
+  boundary = "Climate change",
+  count_mode = "overshoot"
+)
+#> Warning in cartogramR::cartogramR(world_ea, count = "count_carto"): criterion convergence not met. If the result does not satisfy your needs, please
+#>   - increase verbosity level (to understand the problem),
+#>   - increase L,
+#>   - increase relerror 
+#>   in options of cartogramR()
+#> Warning: st_centroid assumes attributes are constant over geometries
+
+# Print the plot
+res$plot
+```
+
+<img src="man/figures/README-ClimateChangePlot-1.png" width="100%" />
+
+### What you get back
+
+`pb_cartogram()` returns a list with:
+
+- `carto_sf`: cartogram geometries (sf)
+- `top_labels_sf`: centroid points for the labeled countries (sf)
+- `plot`: a ggplot cartogram
+- `data_joined`: input polygons joined to PB data (sf)
+- `data_ea`: equal-area projected data used for area calculations (sf)
 
 ## Notes
 

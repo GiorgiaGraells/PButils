@@ -15,12 +15,8 @@ knitr::opts_chunk$set(
 
 # PButils
 
-<!-- badges: start -->
-[![R-CMD-check](https://github.com/GiorgiaGraells/PButils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/GiorgiaGraells/PButils/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
-
 ## Overview
-  
+
 **PButils** provides utility functions to support the processing of planetary boundary data extracted from the literature.
 
 A common issue in planetary boundary and footprint datasets is that **values and units are stored together in the same column**, making comparison, harmonisation, and calculation difficult.
@@ -28,15 +24,16 @@ A common issue in planetary boundary and footprint datasets is that **values and
 The first core functionality of PButils is to **separate numeric values from their units**, while preserving the original data.
 
 Future functionality will focus on:
-  
+
 * unit harmonisation across comparable variables,
-* calculation of boundary overshoot at territorial and per-capita scales.
+* calculation of boundary overshoot at territorial and per-capita scales,
+* visualisation helpers (e.g. cartograms).
 
 ## Installation
 
 You can install the development version of PButils from [GitHub](https://github.com/) with:
 
-``` r
+```{r intall, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("GiorgiaGraells/PButils")
 ```
@@ -45,39 +42,35 @@ devtools::install_github("GiorgiaGraells/PButils")
 
 This is a basic example which shows you how to solve a common problem:
 
-```{r example}
+```{r loadPBUTILS}
 library(PButils)
 ## basic example code
 ```
 
 ## Example data
-  
-PButils ships with an example dataset used throughout the package
-documentation:
-  
-```{r dataset}
+
+PButils ships with an example dataset used throughout the package documentation:
+
+```{r Nitrogendataexample}
 data("Nitrogen_Data")
 
 names(Nitrogen_Data)
 ```
 
-This dataset contains several columns where numeric values and units are
-stored together as character strings (e.g. `"5.4 kg N cap⁻¹ yr⁻¹"`).
+This dataset contains several columns where numeric values and units are stored together as character strings (e.g. `"5.4 kg N cap⁻¹ yr⁻¹"`).
 
-  
 ## Separating values and units
-  
+
 ### Single column
-  
-The `separate_unit_value()` function separates a column containing both
-values and units into two new columns:
-  
+
+The `separate_unit_value()` function separates a column containing both values and units into two new columns:
+
 * `<column>_value` (numeric)
 * `<column>_unit` (character)
 
 while **preserving the original column**.
 
-```{r caclulatefirstoutput}
+```{r showseparateunitvaluefunc}
 out <- separate_unit_value(
   df = Nitrogen_Data,
   columns = "boundary_percapita"
@@ -86,19 +79,19 @@ out <- separate_unit_value(
 names(out)
 ```
 
-```{r showfirstoutput}
+```{r whatIsanOut}
 head(
   out[, c("boundary_percapita",
           "boundary_percapita_value",
           "boundary_percapita_unit")]
 )
 ```
-  
+
 ### Multiple columns at once
-  
+
 You can also process multiple columns in a single call:
-  
-```{r yetanotheroutput}
+
+```{r examplesofseparate}
 out2 <- separate_unit_value(
   df = Nitrogen_Data,
   columns = c("global_limit_considered", "boundary_percapita")
@@ -108,8 +101,8 @@ names(out2)
 ```
 
 Each input column generates its own `_value` and `_unit` pair:
-  
-```{r output2}
+
+```{r showdata}
 head(
   out2[, c("global_limit_considered_value",
            "global_limit_considered_unit",
@@ -119,30 +112,61 @@ head(
 ```
 
 ## Low-level helpers
-  
+
 PButils also exposes the underlying helper functions used internally:
-  
-```{r showhelpers}
+
+```{r examplesofExtract}
 extract_value(Nitrogen_Data$boundary_percapita)
 extract_unit(Nitrogen_Data$boundary_percapita)
 ```
 
-
 These can be useful when working directly with vectors rather than data frames.
 
-  
+## Cartogram visualisation
+
+PButils includes a helper to visualise planetary-boundary overshoot as a cartogram (country areas resized by overshoot or a transformation of it).
+
+### Example
+
+This example uses the bundled datasets `PBData` (overshoot values) and `World` (country polygons).
+
+```{r ClimateChangePlot}
+# Load example data
+# (If you attached these datasets to the package, they will be available via data())
+data("PBData")
+data("World")
+
+# Create a cartogram for a chosen boundary
+res <- pb_cartogram(
+  PB_df = PBData,
+  world_sf = World,
+  boundary = "Climate change",
+  count_mode = "overshoot"
+)
+
+# Print the plot
+res$plot
+```
+
+### What you get back
+
+`pb_cartogram()` returns a list with:
+
+* `carto_sf`: cartogram geometries (sf)
+* `top_labels_sf`: centroid points for the labeled countries (sf)
+* `plot`: a ggplot cartogram
+* `data_joined`: input polygons joined to PB data (sf)
+* `data_ea`: equal-area projected data used for area calculations (sf)
+
 ## Notes
-  
+
 * Original columns are **never modified or removed**
 * Newly created _value and _unit columns are inserted immediately after their source column to facilitate quick inspection.
 * Missing values are preserved as `NA`
 * The implementation avoids non-base piping to keep dependencies minimal
-  
-## Development status
-  
-PButils is under active development.
-The API may evolve as additional unit harmonisation and overshoot
-calculations are added.
 
-Bug reports and feature requests are welcome:
-  [https://github.com/GiorgiaGraells/PButils/issues](https://github.com/GiorgiaGraells/PButils/issues)
+## Development status
+
+PButils is under active development. The API may evolve as additional unit harmonisation and overshoot calculations are added.
+
+Bug reports and feature requests are welcome: [https://github.com/GiorgiaGraells/PButils/issues](https://github.com/GiorgiaGraells/PButils/issues)
