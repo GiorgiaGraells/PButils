@@ -134,6 +134,7 @@ These can be useful when working directly with vectors rather than data frames.
 ## Notes
   
 * Original columns are **never modified or removed**
+* Newly created _value and _unit columns are inserted immediately after their source column to facilitate quick inspection.
 * Missing values are preserved as `NA`
 * The implementation avoids non-base piping to keep dependencies minimal
   

@@ -97,12 +97,12 @@ names(out)
 #>  [9] "variable_description"       "variable_extra_description"
 #> [11] "response_variable"          "response_ecosystem"        
 #> [13] "global_limit_considered"    "year"                      
-#> [15] "boundary_percapita"         "territorial_boundary"      
-#> [17] "footprint_percapita"        "territorial_footprint"     
-#> [19] "overshoot"                  "calculation_resolution"    
-#> [21] "data_reference"             "social_policy_involved"    
-#> [23] "observations"               "boundary_percapita_value"  
-#> [25] "boundary_percapita_unit"
+#> [15] "boundary_percapita"         "boundary_percapita_value"  
+#> [17] "boundary_percapita_unit"    "territorial_boundary"      
+#> [19] "footprint_percapita"        "territorial_footprint"     
+#> [21] "overshoot"                  "calculation_resolution"    
+#> [23] "data_reference"             "social_policy_involved"    
+#> [25] "observations"
 ```
 
 ``` r
@@ -137,14 +137,14 @@ names(out2)
 #>  [7] "location_name"                 "control_variable"             
 #>  [9] "variable_description"          "variable_extra_description"   
 #> [11] "response_variable"             "response_ecosystem"           
-#> [13] "global_limit_considered"       "year"                         
-#> [15] "boundary_percapita"            "territorial_boundary"         
-#> [17] "footprint_percapita"           "territorial_footprint"        
-#> [19] "overshoot"                     "calculation_resolution"       
-#> [21] "data_reference"                "social_policy_involved"       
-#> [23] "observations"                  "global_limit_considered_value"
-#> [25] "global_limit_considered_unit"  "boundary_percapita_value"     
-#> [27] "boundary_percapita_unit"
+#> [13] "global_limit_considered"       "global_limit_considered_value"
+#> [15] "global_limit_considered_unit"  "year"                         
+#> [17] "boundary_percapita"            "boundary_percapita_value"     
+#> [19] "boundary_percapita_unit"       "territorial_boundary"         
+#> [21] "footprint_percapita"           "territorial_footprint"        
+#> [23] "overshoot"                     "calculation_resolution"       
+#> [25] "data_reference"                "social_policy_involved"       
+#> [27] "observations"
 ```
 
 Each input column generates its own `_value` and `_unit` pair:
@@ -309,6 +309,8 @@ frames.
 ## Notes
 
 - Original columns are **never modified or removed**
+- Newly created \_value and \_unit columns are inserted immediately
+  after their source column to facilitate quick inspection.
 - Missing values are preserved as `NA`
 - The implementation avoids non-base piping to keep dependencies minimal
 
