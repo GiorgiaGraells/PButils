@@ -12,6 +12,10 @@ Depends:
     R (>= 3.5)
 LazyData: true
 Imports: 
+    cartogramR,
+    dplyr,
+    ggplot2,
+    sf,
     stringr
 URL: https://github.com/GiorgiaGraells/PButils
 BugReports: https://github.com/GiorgiaGraells/PButils/issues
