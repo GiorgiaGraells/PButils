@@ -4,12 +4,17 @@
 \alias{separate_unit_value}
 \title{Separates units from values in a dataframe}
 \usage{
-separate_unit_value(df, columns)
+separate_unit_value(
+  df,
+  columns = c("territorial_footprint", "territorial_boundary", "footprint_percapita",
+    "boundary_percapita")
+)
 }
 \arguments{
 \item{df}{A dataframe which contains the columns to separate}
 
-\item{columns}{A character vector with the names of columns to separate}
+\item{columns}{A character vector with the names of columns to separate, it
+defaults to}
 }
 \value{
 Returns the same dataframe with the new columns appended
@@ -21,8 +26,10 @@ contain a value and a unit, and creates two new columns per input column:
 }
 \examples{
 data("Nitrogen_Data")
-separate_unit_value(df = Nitrogen_Data, columns = "boundary_percapita")
-# With more than one variable
+# By default it will separate columns  territorial_footprint, territorial_boundary,
+# footprint_percapita, boundary_percapita
+separate_unit_value(df = Nitrogen_Data)
+# but can be changed if needed with more than one variable
 separate_unit_value(df = Nitrogen_Data,
                 columns = c("global_limit_considered","boundary_percapita"))
 }

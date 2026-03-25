@@ -5,18 +5,21 @@
 #' `{column}_value` and `{column}_unit`, without removing the original column.
 #'
 #' @param df A dataframe which contains the columns to separate
-#' @param columns A character vector with the names of columns to separate
+#' @param columns A character vector with the names of columns to separate, it
+#' defaults to
 #' @return Returns the same dataframe with the new columns appended
 #' @examples
 #' data("Nitrogen_Data")
-#' separate_unit_value(df = Nitrogen_Data, columns = "boundary_percapita")
-#' # With more than one variable
+#' # By default it will separate columns  territorial_footprint, territorial_boundary,
+#' # footprint_percapita, boundary_percapita
+#' separate_unit_value(df = Nitrogen_Data)
+#' # but can be changed if needed with more than one variable
 #' separate_unit_value(df = Nitrogen_Data,
 #'                 columns = c("global_limit_considered","boundary_percapita"))
 #' @author Derek Corcoran <derek.corcoran.barrios@gmail.com>
 #' @author Giorgia Graells <gygraell@gmail.com>
 #' @export
-separate_unit_value <- function(df, columns) {
+separate_unit_value <- function(df, columns = c("territorial_footprint", "territorial_boundary", "footprint_percapita", "boundary_percapita")) {
   stopifnot(is.data.frame(df))
   stopifnot(is.character(columns))
   if (length(columns) == 0) return(df)
@@ -72,16 +75,21 @@ separate_unit_value <- function(df, columns) {
 #' @examples
 #' data("Nitrogen_Data")
 #' extract_value(Nitrogen_Data$boundary_percapita)
-#' @importFrom stringr str_extract
+#' @importFrom stringr str_replace_all str_match
 #' @author Derek Corcoran <derek.corcoran.barrios@gmail.com>
 #' @author Giorgia Graells <gygraell@gmail.com>
 #' @export
 
 
 extract_value <- function(x) {
-  out <- str_extract(x, "[0-9\\.]+")
+  x <- str_replace_all(x, "[\r\n]+.*$", "")   # drop notes after line breaks
+  out <- str_match(
+    x,
+    "^\\s*([+-]?(?:\\d+(?:\\.\\d+)?|\\.\\d+)(?:[eE][+-]?\\d+)?)"
+  )[, 2]
   as.numeric(out)
 }
+
 
 
 #' Extracts units from a string with values and Units
@@ -94,12 +102,16 @@ extract_value <- function(x) {
 #' @examples
 #' data("Nitrogen_Data")
 #' extract_unit(Nitrogen_Data$boundary_percapita)
-#' @importFrom stringr str_extract str_trim
+#' @importFrom stringr str_replace_all str_match str_trim
 #' @author Derek Corcoran <derek.corcoran.barrios@gmail.com>
 #' @author Giorgia Graells <gygraell@gmail.com>
 #' @export
 
 extract_unit <- function(x) {
-  out <- str_extract(x, "(?<=\\d)\\s*[^0-9\\.]+$")
+  x <- str_replace_all(x, "[\r\n]+.*$", "")   # drop notes after line breaks
+  out <- str_match(
+    x,
+    "^\\s*[+-]?(?:\\d+(?:\\.\\d+)?|\\.\\d+)(?:[eE][+-]?\\d+)?\\s*(.*?)\\s*$"
+  )[, 2]
   str_trim(out)
 }
