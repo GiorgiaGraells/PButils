@@ -85,8 +85,8 @@ consider alternatives such as \code{\link[sf:geos_unary]{sf::st_point_on_surface
 data(PBData)
 data(World)
 res <- pb_cartogram(
-  PB_df = PB,
-  world_sf = world,
+  PB_df = PBData,
+  world_sf = World,
   boundary = "Climate change",
   count_mode = "overshoot"
 )
